@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cekrek Studio - Photobox &amp; Self Studio</title>
+
+  <!-- Bootstrap 5 via CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  
+  <style>
+    /* Palet pastel: pink permen, biru langit, kuning mentega, lilac, tinta ungu tua */
+    :root {
+      --pink: #ffb8cf;
+      --pink-tua: #e8588a;
+      --biru: #b9dcf5;
+      --kuning: #fff0a6;
+      --lilac: #d9c8f5;
+      --tinta: #3a2e4d;
+      --kertas: #eae0fb;
+      --latar: #de9db3;
+    }
+    body { font-family: "Quicksand", system-ui, sans-serif; background: var(--latar); color: var(--tinta); }
+    h1, h2, h5, .navbar-brand { font-family: "Fredoka", system-ui, sans-serif; font-weight: 600; }
+
+    .navbar { background: var(--kertas) !important; border-bottom: 2px dashed var(--pink); }
+    .navbar-brand { font-size: 1.6rem; color: var(--pink-tua) !important; }
+    .nav-link { color: var(--tinta) !important; font-weight: 700; }
+    .nav-link:hover { color: var(--pink-tua) !important; }
+
+    /* Hero: gradasi pastel pink ke lilac ke biru */
+    .hero {
+      border-radius: 1.75rem;
+      background: linear-gradient(135deg, #ffd3e2 0%, #e6d6fa 52%, #c9e6f8 100%);
+      border: 3px solid #bd7bb5;
+      box-shadow: 0 10px 30px rgba(114, 30, 59, 0.15);
+    }
+    .hero h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.1; }
+    .hero p { color: #5a4a6e; }
+    .gambar-hero { position: relative; max-width: 330px; margin: 0 auto; }
+    .gambar-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 1.25rem; }
+
+    /* Ornamen bintang dan hati pemisah judul */
+    .ornamen { display: flex; align-items: center; justify-content: center; gap: .6rem; margin-bottom: 1.5rem; }
+    .ornamen::before, .ornamen::after { content: ""; width: 60px; border-top: 3px dotted var(--pink); }
+    .ornamen svg { width: 22px; height: 22px; }
+    .judul-seksi { font-size: clamp(1.7rem, 4vw, 2.2rem); }
+
+    .card { background: var(--kertas); border: 3px solid #fff; border-radius: 1.5rem; overflow: visible;
+            box-shadow: 0 8px 22px rgba(58, 46, 77, .1); transition: transform .25s; }
+    .card:hover { transform: rotate(-1deg) translateY(-3px); }
+    .foto { position: relative; height: 200px; display: flex; align-items: flex-end; justify-content: center; gap: 4px;
+            border-radius: 1.2rem 1.2rem 0 0; overflow: hidden; }
+    .foto svg.orang { width: 52px; height: 78px; }
+    .foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .selotip { position: absolute; top: -10px; left: 50%; width: 84px; height: 24px; background: rgba(255, 224, 120, .85);
+               transform: translateX(-50%) rotate(-3deg); border-radius: 3px; z-index: 2; }
+    .card-title { font-family: "Fredoka", sans-serif; font-size: 1.5rem; }
+    .harga { font-family: "Fredoka", sans-serif; font-size: 1.25rem; color: var(--pink-tua); }
+    .label { background: var(--kuning); color: var(--tinta); font-weight: 700; }
+
+    .btn-primary { --bs-btn-bg: var(--pink-tua); --bs-btn-border-color: var(--pink-tua);
+      --bs-btn-hover-bg: #c93f72; --bs-btn-hover-border-color: #c93f72;
+      --bs-btn-active-bg: #c93f72; --bs-btn-active-border-color: #c93f72; font-weight: 700; border-radius: 2rem; }
+    .btn-outline-primary { --bs-btn-color: var(--pink-tua); --bs-btn-border-color: var(--pink-tua);
+      --bs-btn-hover-bg: var(--pink-tua); --bs-btn-hover-border-color: var(--pink-tua); --bs-btn-hover-color: #fff;
+      font-weight: 700; border-radius: 2rem; }
+
+    .kotak-form { background: var(--kertas); border: 3px solid #fff; border-radius: 1.5rem; box-shadow: 0 8px 22px rgba(58, 46, 77, .1); }
+    .form-control { background: #fff; border: 2px solid #f1d5df; border-radius: .9rem; }
+    .form-control:focus { border-color: var(--pink-tua); box-shadow: 0 0 0 .2rem rgba(232, 88, 138, .2); }
+    footer { background: var(--tinta); color: #eadff5; }
+    section { scroll-margin-top: 4.5rem; }
+    @media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
+  </style>
+</head>
+<body>
+
+  <!-- Simbol SVG yang dipakai ulang -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="bintang" viewBox="0 0 24 24"><path d="M12 1 L14.6 9.4 L23 12 L14.6 14.6 L12 23 L9.4 14.6 L1 12 L9.4 9.4 Z" fill="currentColor"/></symbol>
+    <symbol id="hati" viewBox="0 0 24 24"><path d="M12 21 C3 14 1 9 1 6.5 C1 3.5 3.5 2 6 2 C8.5 2 10.5 3.5 12 5.5 C13.5 3.5 15.5 2 18 2 C20.5 2 23 3.5 23 6.5 C23 9 21 14 12 21 Z" fill="currentColor"/></symbol>
+    <symbol id="orang" viewBox="0 0 40 60">
+      <circle cx="20" cy="16" r="12" fill="currentColor"/>
+      <path d="M2 60 Q2 34 20 34 Q38 34 38 60 Z" fill="currentColor"/>
+      <circle cx="16" cy="15" r="1.6" fill="#3a2e4d"/><circle cx="24" cy="15" r="1.6" fill="#3a2e4d"/>
+      <path d="M16 20 Q20 23.5 24 20" stroke="#3a2e4d" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    </symbol>
+  </svg>
+
+  <!-- Navbar responsif -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#beranda">Cekrek Studio</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#menuUtama" aria-controls="menuUtama"
+              aria-expanded="false" aria-label="Buka menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="menuUtama">
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link" href="#beranda">Beranda</a>
+          <a class="nav-link" href="#tentang">Tentang</a>
+          <a class="nav-link" href="#portofolio">Paket</a>
+          <a class="nav-link" href="#kontak">Kontak</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Semua isi dibungkus .container -->
+  <div class="container">
+
+    <!-- Hero -->
+    <section id="beranda" class="hero px-3 px-lg-5 py-5 my-4">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7 text-center text-lg-start">
+          <h1>Foto sendiri,<br />gaya sendiri</h1>
+          <p class="lead mt-3" style="max-width: 32rem;">
+            Masuk, pilih pose, lalu cekrek. Kami siapkan studio, lampu, dan properti lucu.
+            Hasil fotonya langsung bisa kamu bawa pulang.
+          </p>
+          <a href="#portofolio" class="btn btn-primary btn-lg mt-2 px-4">Lihat paket</a>
+        </div>
+
+        <!-- Gambar hero: ilustrasi photo strip. Kalau ada foto img/hero-studio.jpg, foto otomatis menggantikan. -->
+        <div class="col-lg-5">
+          <div class="gambar-hero">
+            <svg viewBox="0 0 320 350" class="d-block w-100" role="img" aria-label="Ilustrasi photo strip berisi tiga foto lucu">
+              <circle cx="160" cy="175" r="140" fill="#fff" opacity=".35"/>
+              <g transform="rotate(-6 160 175)">
+                <rect x="95" y="10" width="130" height="330" rx="10" fill="#fffdf8" stroke="#fff" stroke-width="3"/>
+                <rect x="107" y="24" width="106" height="90" rx="6" fill="#ffb8cf"/>
+                <rect x="107" y="124" width="106" height="90" rx="6" fill="#b9dcf5"/>
+                <rect x="107" y="224" width="106" height="90" rx="6" fill="#fff0a6"/>
+                <svg x="140" y="52" width="40" height="60" viewBox="0 0 40 60" style="color:#fffdf8"><use href="#orang"/></svg>
+                <svg x="122" y="152" width="34" height="60" viewBox="0 0 40 60" style="color:#fffdf8"><use href="#orang"/></svg>
+                <svg x="164" y="152" width="34" height="60" viewBox="0 0 40 60" style="color:#e8588a"><use href="#orang"/></svg>
+                <svg x="116" y="256" width="28" height="56" viewBox="0 0 40 60" style="color:#e8588a"><use href="#orang"/></svg>
+                <svg x="146" y="252" width="28" height="60" viewBox="0 0 40 60" style="color:#fffdf8"><use href="#orang"/></svg>
+                <svg x="176" y="256" width="28" height="56" viewBox="0 0 40 60" style="color:#7fb4dd"><use href="#orang"/></svg>
+                <text x="160" y="333" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="14" fill="#e8588a">cekrek!</text>
+              </g>
+              <!-- stiker -->
+              <use href="#hati" x="35" y="55" width="44" height="44" style="color:#e8588a" transform="rotate(-14 57 77)"/>
+              <use href="#bintang" x="238" y="40" width="40" height="40" style="color:#f2c94c"/>
+              <use href="#bintang" x="250" y="250" width="30" height="30" style="color:#fff"/>
+              <use href="#hati" x="50" y="255" width="30" height="30" style="color:#fff" transform="rotate(12 65 270)"/>
+            </svg>
+            <img src="img/hero-studio.jpg" alt="Suasana Cekrek Studio" onerror="this.remove()" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tentang -->
+    <section id="tentang" class="py-4 text-center">
+      <h2 class="judul-seksi mb-2">Tentang kami</h2>
+      <div class="ornamen"><svg aria-hidden="true" style="color:#f2c94c"><use href="#bintang"/></svg></div>
+      <p class="mx-auto" style="max-width: 38rem;">
+        Cekrek Studio adalah self photo studio bergaya pastel. Kamu bisa mengatur sendiri pose dan
+        ekspresinya lewat remote, kami yang menyiapkan lampu, latar warna-warni, dan
+        properti seperti bando, kacamata, dan balon. Cocok untuk sendirian, berdua,
+        atau bareng teman satu geng. letsss gooo!
+      </p>
+    </section>
+
+    <!-- Grid: 3 card col-md-4 -->
+    <section id="portofolio" class="py-4">
+      <h2 class="judul-seksi mb-2 text-center">Pilih paketmu</h2>
+      <div class="ornamen"><svg aria-hidden="true" style="color:#e8588a"><use href="#hati"/></svg></div>
+
+      <div class="row g-4">
+
+        <div class="col-md-4">
+          <div class="card h-100">
+            <span class="selotip" aria-hidden="true"></span>
+            <div class="foto" style="background:#ffd3e2;">
+              <svg class="orang" role="img" aria-label="Ilustrasi satu orang" style="color:#fffdf8;"><use href="#orang"/></svg>
+              <img src="img/paket-solo.jpg" alt="Paket Solo" onerror="this.remove()" />
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">Solo</h5>
+              <p class="card-text">Waktu sendiri untuk berpose sesukamu. Pas untuk foto profil, ulang tahun, atau sekadar senang-senang.</p>
+              <span class="badge label align-self-start mb-3">1 orang &middot; 15 menit</span>
+              <div class="d-flex justify-content-between align-items-center mt-auto">
+                <span class="harga">Rp 35.000</span>
+                <a href="#kontak" class="btn btn-outline-primary btn-sm tanya" data-paket="Solo">Booking</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100">
+            <span class="selotip" aria-hidden="true" style="background: rgba(185, 220, 245, .9);"></span>
+            <div class="foto" style="background:#c9e6f8;">
+              <svg class="orang" role="img" aria-label="Ilustrasi dua orang" style="color:#fffdf8;"><use href="#orang"/></svg>
+              <svg class="orang" aria-hidden="true" style="color:#e8588a;"><use href="#orang"/></svg>
+              <img src="img/paket-couple.jpg" alt="Paket Couple" onerror="this.remove()" />
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">Couple</h5>
+              <p class="card-text">Untuk berdua, entah pasangan, sahabat, atau kakak-adik. Pose seru dan hasilnya jadi kenang-kenangan manis.</p>
+              <span class="badge label align-self-start mb-3">2 orang &middot; 20 menit</span>
+              <div class="d-flex justify-content-between align-items-center mt-auto">
+                <span class="harga">Rp 60.000</span>
+                <a href="#kontak" class="btn btn-outline-primary btn-sm tanya" data-paket="Couple">Booking</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100">
+            <span class="selotip" aria-hidden="true" style="background: rgba(217, 200, 245, .9);"></span>
+            <div class="foto" style="background:#fff0a6;">
+              <svg class="orang" role="img" aria-label="Ilustrasi empat orang" style="color:#fffdf8; width:44px;"><use href="#orang"/></svg>
+              <svg class="orang" aria-hidden="true" style="color:#e8588a; width:44px;"><use href="#orang"/></svg>
+              <svg class="orang" aria-hidden="true" style="color:#7fb4dd; width:44px;"><use href="#orang"/></svg>
+              <svg class="orang" aria-hidden="true" style="color:#b99be6; width:44px;"><use href="#orang"/></svg>
+              <img src="img/paket-squad.jpg" alt="Paket Squad" onerror="this.remove()" />
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">Squad</h5>
+              <p class="card-text">Ajak teman satu geng, sampai enam orang. Ruang lebih luas dan properti lebih banyak untuk foto ramai-ramai.</p>
+              <span class="badge label align-self-start mb-3">Maks. 6 orang &middot; 30 menit</span>
+              <div class="d-flex justify-content-between align-items-center mt-auto">
+                <span class="harga">Rp 110.000</span>
+                <a href="#kontak" class="btn btn-outline-primary btn-sm tanya" data-paket="Squad">Booking</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Form kontak + modal konfirmasi -->
+    <section id="kontak" class="py-4 mb-4 mx-auto" style="max-width: 640px;">
+      <h2 class="judul-seksi mb-2 text-center">Booking sesi foto</h2>
+      <div class="ornamen"><svg aria-hidden="true" style="color:#f2c94c"><use href="#bintang"/></svg></div>
+
+      <div id="notifikasi"></div>
+
+      <form id="formKontak" class="kotak-form p-3 p-md-4" novalidate>
+        <div class="mb-3">
+          <label for="nama" class="form-label">Nama</label>
+          <input type="text" class="form-control" id="nama" placeholder="Masukkan nama" required />
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="email" placeholder="nama@email.com" required />
+        </div>
+        <div class="mb-3">
+          <label for="pesan" class="form-label">Pesan</label>
+          <textarea class="form-control" id="pesan" rows="4" placeholder="Paket apa yang kamu mau, dan kapan mau datang?" required></textarea>
+        </div>
+        <button type="button" class="btn btn-primary px-4" id="tombolKirim">Kirim Pesan</button>
+      </form>
+    </section>
+  </div>
+
+  <footer class="text-center py-4 small">
+    &copy; 2026 Cekrek Studio &middot; &middot; Shafa Aulia - 2510165
+  </footer>
+
+  <!-- Modal konfirmasi -->
+  <div class="modal fade" id="modalKonfirmasi" tabindex="-1" aria-labelledby="judulModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background: var(--kertas); border-radius: 1.5rem; color: var(--tinta);">
+        <div class="modal-header">
+          <h5 class="modal-title" id="judulModal">Konfirmasi pengiriman</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">Apakah Anda yakin ingin mengirim pesan ini?</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 2rem;">Batal</button>
+          <button type="button" class="btn btn-primary" id="tombolYa">Ya, Kirim</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const form = document.getElementById("formKontak");
+    const modal = new bootstrap.Modal(document.getElementById("modalKonfirmasi"));
+
+    // Tombol "Booking" di card mengisi awal pesan di form
+    document.querySelectorAll(".tanya").forEach(tombol => {
+      tombol.addEventListener("click", () => {
+        document.getElementById("pesan").value = "Halo, saya mau booking paket " + tombol.dataset.paket + ".";
+      });
+    });
+
+    // Cek isian dulu, kalau lengkap baru tampilkan modal
+    document.getElementById("tombolKirim").addEventListener("click", () => {
+      if (form.reportValidity()) modal.show();
+    });
+
+    // Konfirmasi: tutup modal, tampilkan notifikasi, kosongkan form
+    document.getElementById("tombolYa").addEventListener("click", () => {
+      modal.hide();
+      document.getElementById("notifikasi").innerHTML =
+        '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+        'Pesan terkirim. Kami akan membalas lewat email secepatnya.' +
+        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button></div>';
+      form.reset();
+    });
+  </script>
+</body>
+</html>
